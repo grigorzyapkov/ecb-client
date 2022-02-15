@@ -87,4 +87,4 @@ class ECBCLient {
 }
 
 const ecbClient = new ECBCLient();
-export default ecbClient;
+export { ecbClient };
