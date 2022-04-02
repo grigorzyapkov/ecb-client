@@ -1,3 +1,6 @@
+.vscode
+coverage
+
 *.log
 .DS_Store
 node_modules

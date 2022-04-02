@@ -1,6 +1,7 @@
-import axios from "axios";
+import { HttpStatus } from "../constants/http-status.enum";
 import { ExceptionBuilder } from "../exceptions/builder/ExceptionBuilder";
 import { arraysToMap } from "../utils/object.formatters";
+import ecbFetch from "../ecb-fetch";
 import {
   ECBCurrencySeriesValue,
   ECBStructureObservation,
@@ -13,38 +14,25 @@ import { ECBSeriesSet } from "./types";
 class ECBCLient {
   private url = "https://sdw-wsrest.ecb.europa.eu/service/data/EXR/";
 
-  public getExchangeRatesForPeriod(
+  public async getExchangeRatesForPeriod(
     startPeriod: string,
     endPeriod: string,
     ...currencies: string[]
   ) {
-    return axios
-      .get(
-        `${this.url}${this.buildCurrencyResource(currencies)}?${this.buildQueryParams(
-          startPeriod,
-          endPeriod
-        )}`
-      )
-      .then((res) => this.buildRates(res.data))
-      .catch((error) => {
-        const err = error.toJSON();
-        throw ExceptionBuilder.build(err.status, err.message);
-      });
+    const data = await ecbFetch(startPeriod, endPeriod, ...currencies);
+    if (!data) {
+      throw ExceptionBuilder.build(HttpStatus.NOT_FOUND, "Exchange rates data not found");
+    }
+
+    return this.buildRates(data);
   }
 
-  private buildCurrencyResource(currencies: string[]) {
-    const currenciesString = currencies?.join("+") ?? "";
-    return `D.${currenciesString}.EUR.SP00.A`;
-  }
-
-  private buildQueryParams(startPeriod?: string, endPeriod?: string): string {
-    const startPeriodParam = this.buildQueryParam("startPeriod", startPeriod);
-    const endPeriodParam = this.buildQueryParam("endPeriod", endPeriod);
-    return `format=jsondata${startPeriodParam}${endPeriodParam}`;
-  }
-
-  private buildQueryParam(id: string, param?: string): string {
-    return param ? `&${id}=${param}` : "";
+  public async getExchangeRatesForDate(
+    date: string,
+    ...currencies: string[]
+  ) {
+    const rates = await this.getExchangeRatesForPeriod(date, date, ...currencies);
+    return rates[date];
   }
 
   private buildRates(data: any) {
