@@ -1,1 +1,1 @@
-export {ecbClient as default} from "./client/ECBClient";
+export {ecbClient as default} from "./ECBClient";
