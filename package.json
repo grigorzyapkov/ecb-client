@@ -31,11 +31,11 @@
   "size-limit": [
     {
       "path": "dist/ecb-client.cjs.production.min.js",
-      "limit": "15 KB"
+      "limit": "50 KB"
     },
     {
       "path": "dist/ecb-client.esm.js",
-      "limit": "15 KB"
+      "limit": "50 KB"
     }
   ],
   "devDependencies": {
