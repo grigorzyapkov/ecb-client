@@ -39,8 +39,8 @@ class ECBCLient {
     ) {
       throw ExceptionBuilder.build(HttpStatus.BAD_REQUEST, "Invalid date");
     }
-    const twoDaysBeforeStartPeriod = sub(startPeriodDate, { days: 5 });
-    const newStartPeriod = format(twoDaysBeforeStartPeriod, DATE_FORMAT);
+    const fiveDaysBeforeStartPeriod = sub(startPeriodDate, { days: 5 });
+    const newStartPeriod = format(fiveDaysBeforeStartPeriod, DATE_FORMAT);
     const data = await ecbFetch(newStartPeriod, endPeriod, ...currencies);
     if (!data) {
       console.error(
