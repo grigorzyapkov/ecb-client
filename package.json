@@ -35,7 +35,7 @@
     },
     {
       "path": "dist/ecb-client.esm.js",
-      "limit": "50 KB"
+      "limit": "100 KB"
     }
   ],
   "devDependencies": {
