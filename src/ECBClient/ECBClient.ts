@@ -39,18 +39,26 @@ class ECBCLient {
     ) {
       throw ExceptionBuilder.build(HttpStatus.BAD_REQUEST, "Invalid date");
     }
-    const twoDaysBeforeStartPeriod = sub(startPeriodDate, { days: 2 });
-    const newStartPeriod = format(twoDaysBeforeStartPeriod, DATE_FORMAT);
+    const fiveDaysBeforeStartPeriod = sub(startPeriodDate, { days: 5 });
+    const newStartPeriod = format(fiveDaysBeforeStartPeriod, DATE_FORMAT);
     const data = await ecbFetch(newStartPeriod, endPeriod, ...currencies);
     if (!data) {
-      throw ExceptionBuilder.build(HttpStatus.NOT_FOUND, "Exchange rates data not found");
+      console.error(
+        "exchange rates not found between startPeriod=",
+        startPeriod,
+        " and endPeriod=",
+        endPeriod
+      );
+      throw ExceptionBuilder.build(HttpStatus.NOT_FOUND, "Exchange rates data not found.");
     }
 
     const exchangeRates = this.buildRates(data, endPeriod);
     // remove first and second date because not needed
-    const oneDayBeforeStartPeriod = sub(startPeriodDate, { days: 1 });
     delete exchangeRates[newStartPeriod];
-    delete exchangeRates[format(oneDayBeforeStartPeriod, DATE_FORMAT)];
+    delete exchangeRates[format(sub(startPeriodDate, { days: 1 }), DATE_FORMAT)];
+    delete exchangeRates[format(sub(startPeriodDate, { days: 2 }), DATE_FORMAT)];
+    delete exchangeRates[format(sub(startPeriodDate, { days: 3 }), DATE_FORMAT)];
+    delete exchangeRates[format(sub(startPeriodDate, { days: 4 }), DATE_FORMAT)];
 
     return exchangeRates;
   }
