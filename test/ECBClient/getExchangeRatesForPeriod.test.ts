@@ -2,9 +2,9 @@ import { ecbClient } from "../../src/ECBClient/ECBClient";
 import ecbFetch from "../../src/ecb-fetch";
 import { NotFoundException } from "../../src/exceptions/NotFoundException";
 import {
-  allResponse29Mrch2022To31March2022,
-  usdResponse23March2022To27March2022,
-  usdResponse28March2022To30March2022,
+  allResponse26Mrch2022To31March2022,
+  usdResponse20March2022To27March2022,
+  usdResponse25March2022To30March2022,
 } from "./mockResponse";
 import { BadRequestException } from "../../src/exceptions/BadRequestException";
 jest.mock("../../src/ecb-fetch");
@@ -18,7 +18,7 @@ describe("getExchangeRatesForPeriod", () => {
       await ecbClient.getExchangeRatesForPeriod("2022-04-02", "2022-04-02");
     await expect(action()).rejects.toThrowError(NotFoundException);
     expect(ecbFetchMock.mock.calls.length).toBe(1);
-    expect(ecbFetchMock).toBeCalledWith("2022-03-31", "2022-04-02");
+    expect(ecbFetchMock).toBeCalledWith("2022-03-28", "2022-04-02");
   });
 
   it("should return correct USD exchange rates for given period and only days with available rates", async () => {
@@ -27,12 +27,12 @@ describe("getExchangeRatesForPeriod", () => {
         USD: 1.1126,
       },
     };
-    ecbFetchMock.mockResolvedValue(usdResponse28March2022To30March2022);
+    ecbFetchMock.mockResolvedValue(usdResponse25March2022To30March2022);
 
     const actual = await ecbClient.getExchangeRatesForPeriod("2022-03-30", "2022-03-30", "USD");
 
     expect(actual).toEqual(expected);
-    expect(ecbFetchMock).toBeCalledWith("2022-03-28", "2022-03-30", "USD");
+    expect(ecbFetchMock).toBeCalledWith("2022-03-25", "2022-03-30", "USD");
     expect(ecbFetchMock.mock.calls.length).toBe(1);
   });
 
@@ -48,12 +48,12 @@ describe("getExchangeRatesForPeriod", () => {
         USD: 1.1002,
       },
     };
-    ecbFetchMock.mockResolvedValue(usdResponse23March2022To27March2022);
+    ecbFetchMock.mockResolvedValue(usdResponse20March2022To27March2022);
 
     const actual = await ecbClient.getExchangeRatesForPeriod("2022-03-25", "2022-03-27", "USD");
 
     expect(actual).toEqual(expected);
-    expect(ecbFetchMock).toBeCalledWith("2022-03-23", "2022-03-27", "USD");
+    expect(ecbFetchMock).toBeCalledWith("2022-03-20", "2022-03-27", "USD");
     expect(ecbFetchMock.mock.calls.length).toBe(1);
   });
 
@@ -96,14 +96,14 @@ describe("getExchangeRatesForPeriod", () => {
 
     ecbFetchMock.mockImplementation(() => {
       return new Promise((resolve, reject) => {
-        resolve(allResponse29Mrch2022To31March2022);
+        resolve(allResponse26Mrch2022To31March2022);
       });
     });
 
     const actual = await ecbClient.getExchangeRatesForPeriod("2022-03-31", "2022-03-31");
 
     expect(actual).toEqual(expected);
-    expect(ecbFetchMock).toBeCalledWith("2022-03-29", "2022-03-31");
+    expect(ecbFetchMock).toBeCalledWith("2022-03-26", "2022-03-31");
     expect(ecbFetchMock.mock.calls.length).toBe(1);
   });
 

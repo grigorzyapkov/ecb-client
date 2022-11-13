@@ -5,9 +5,12 @@ const url = "https://sdw-wsrest.ecb.europa.eu/service/data/EXR/";
 
 export const ecbFetch = async (startPeriod: string, endPeriod: string, ...currencies: string[]) => {
   try {
-    let response = await axios.get(
-      `${url}${buildCurrencyResource(currencies)}?${buildQueryParams(startPeriod, endPeriod)}`
-    );
+    const endpoint = `${url}${buildCurrencyResource(currencies)}?${buildQueryParams(
+      startPeriod,
+      endPeriod
+    )}`;
+    console.log(`Fetch ${endpoint} ...`);
+    let response = await axios.get(endpoint);
     return response.data;
   } catch (e) {
     const err = e.toJSON();

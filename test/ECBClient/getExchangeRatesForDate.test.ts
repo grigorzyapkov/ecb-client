@@ -1,7 +1,7 @@
 import { ecbClient } from "../../src/ECBClient/ECBClient";
 import ecbFetch from "../../src/ecb-fetch";
 import { NotFoundException } from "../../src/exceptions/NotFoundException";
-import { usdResponse25March2022To27March2022, usdResponse30March2022 } from "./mockResponse";
+import { usdResponse22March2022To27March2022, usdResponse25March2022To30March2022 } from "./mockResponse";
 import { BadRequestException } from "../../src/exceptions/BadRequestException";
 
 jest.mock("../../src/ecb-fetch");
@@ -15,7 +15,7 @@ describe("getExchangeRatesForDate", () => {
     
     await expect(action()).rejects.toThrowError(NotFoundException);
     expect(ecbFetchMock.mock.calls.length).toBe(1);
-    expect(ecbFetchMock).toBeCalledWith("2022-03-31", "2022-04-02");
+    expect(ecbFetchMock).toBeCalledWith("2022-03-28", "2022-04-02");
   });
 
   it("should return correct USD exchange rates for given date with available exchange rates", async () => {
@@ -25,14 +25,14 @@ describe("getExchangeRatesForDate", () => {
 
     ecbFetchMock.mockImplementation(() => {
       return new Promise((resolve, reject) => {
-        resolve(usdResponse30March2022);
+        resolve(usdResponse25March2022To30March2022);
       });
     });
 
     const response = await ecbClient.getExchangeRatesForDate("2022-03-30", "USD");
 
     expect(response).toEqual(expected);
-    expect(ecbFetchMock).toBeCalledWith("2022-03-28", "2022-03-30", "USD");
+    expect(ecbFetchMock).toBeCalledWith("2022-03-25", "2022-03-30", "USD");
   });
 
   it("should return correct USD exchange rates for given date without exchange rates", async () => {
@@ -42,14 +42,14 @@ describe("getExchangeRatesForDate", () => {
 
     ecbFetchMock.mockImplementation(() => {
       return new Promise((resolve, reject) => {
-        resolve(usdResponse25March2022To27March2022);
+        resolve(usdResponse22March2022To27March2022);
       });
     });
 
     const response = await ecbClient.getExchangeRatesForDate("2022-03-27", "USD");
 
     expect(response).toEqual(expected);
-    expect(ecbFetchMock).toBeCalledWith("2022-03-25", "2022-03-27", "USD");
+    expect(ecbFetchMock).toBeCalledWith("2022-03-22", "2022-03-27", "USD");
   });
 
   it("should throw Exception if date is not in valid format", async () => {
